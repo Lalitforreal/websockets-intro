@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.io Chat</title>
+  </head>
+  <body>
+    <h2>Socket.io Client</h2>
+    <input id="msg" placeholder="Type message..." />
+    <button onclick="sendMsg()">Send</button>
+    <ul id="list"></ul>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:3000");
+      const list = document.getElementById("list");
+
+      const roomId = "ahh pure solvent";
+      socket.emit("join-room",roomId);
+      socket.on("welcome", (msg) => addLi("✅ " + msg));
+
+      //confirm join 
+      socket.on("joined-room",(roomId)=>{
+        addLi("joined room: " +roomId);
+      });
+
+      socket.on("room-message : ", (msg) => {
+            addLi("📩 ROOM: " + msg);
+        });
+
+        function sendMsg(){
+            const msg = document.getElementById("msg").value;
+              // ✅ send message into room
+            socket.emit("send-to-room", { roomId, msg });
+        }
+
+        function addLi(text) {
+            const li = document.createElement("li");
+            li.innerText = text;
+            list.appendChild(li);
+        }
+    </script>
+  </body>
+</html>

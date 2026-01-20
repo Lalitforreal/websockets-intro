@@ -36,6 +36,15 @@ io.on("connection",(socket)=>{
         console.log("User disconnected" + socket.id);
     });
 
+
+    socket.on("join-room",(roomId)=>{
+        socket.join(roomId);
+        socket.emit("joined", `Joined room ${roomId}`);
+    });
+
+    socket.on("send-to-room", ({ roomId, msg }) => {
+        io.to(roomId).emit("room-message", msg); //important
+    });
 });
 
 server.listen(3000,()=>{

@@ -13,8 +13,12 @@ const server = http.createServer(app);
 
 
 // serve client.html
-app.get("/", (req, res) => {
+app.get("/client1", (req, res) => {
   res.sendFile(path.join(__dirname, "client.html"));
+});
+
+app.get("/client2", (req, res) => {
+  res.sendFile(path.join(__dirname, "client1.html"));
 });
 
 const io = new Server(server);

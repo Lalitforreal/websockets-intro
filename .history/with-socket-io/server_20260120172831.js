@@ -1,6 +1,3 @@
-//in socket.io serve the html using express by adding path and the "/" route so you aren't cors blocked 
-
-
 
 const express = require('express');
 const http = require("http");
@@ -19,6 +16,8 @@ app.get("/", (req, res) => {
 
 const io = new Server(server);
 
+
+
 io.on("connection",(socket)=>{
     console.log("User Connected", socket.id);
 
@@ -35,7 +34,6 @@ io.on("connection",(socket)=>{
     socket.on("disconnect",()=>{
         console.log("User disconnected" + socket.id);
     });
-
 });
 
 server.listen(3000,()=>{
