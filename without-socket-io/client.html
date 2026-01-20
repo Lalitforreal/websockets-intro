@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WS Client</title>
+  </head>
+  <body>
+    <h2>WebSocket Client</h2>
+
+    <input id="msg" placeholder="Type message..." />
+    <button onclick="sendMsg()">Send</button>
+
+    <ul id="list"></ul>
+
+    <script>
+        //create the client side socket connection
+      const socket = new WebSocket("ws://localhost:8080");
+      const list = document.getElementById("list");
+
+
+      socket.onopen= ()=>{
+        addLi("✅ Connected to WebSocket server");
+      };
+
+      //event.data = the string message that came in from server
+    
+      socket.onmessage = (event)=>{
+        //parse cause So you convert string back to object:
+        const data = JSON.parse(event.data);
+        addLi(` ${data.type}: ${data.msg}`);
+      };
+
+      socket.onclose = () => {
+        addLi("❌ Disconnected from server");
+      };
+
+
+      //now message from client to server 
+      function sendMsg(){
+        const msg = document.getElementById("msg").value;
+        socket.send(msg);
+      }
+
+      function addLi(text){
+        const li = document.createElement("li");
+        li.innerText = text;
+        list.appendChild(li);
+      }
+
+    </script>
+  </body>
+</html>
