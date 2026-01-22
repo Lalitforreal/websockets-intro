@@ -4,10 +4,12 @@
     <title>Socket.io Chat</title>
   </head>
   <body>
-    <h2>Socket.io Client</h2>
+    <h2>Socket.io Client 1</h2>
     <input id="msg" placeholder="Type message..." />
     <button onclick="sendMsg()">Send</button>
     <ul id="list"></ul>
+    <button onclick="leaveRoom()">Leave Room</button>
+    <button onclick="disconnect()">Disconnect</button>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
@@ -24,20 +26,52 @@
       });
 
         socket.on("room-message: ", (data) => {
-        addLi(`📩 ${data.roomId} | from ${data.from} : ${data.msg}`);
+        addLi(`📩 ${data.roomId} | from ${data.from} : ${data.msg} | at ${data.time}`);
         });
 
+        socket.on("user-left", ({ id }) => {
+            addLi(`🚪 user left: ${id}`);
+        });
+
+        socket.on("user-disconnected", (data) => {
+            addLi(`❌ user disconnected: ${data.id}`);
+            console.log("User disconnected"+ `${data.id}`);
+        });
+
+        
+        
+        socket.on("user-joined",(data)=>{
+            addLi(`User joined : ${data.id}`)
+        });
+        // detect reconnection
+        socket.on("connect", () => {
+            addLi(`🟢 connected again: ${socket.id}`);
+        });
+        
+        socket.on("disconnect", (reason) => {
+            addLi(`🔴 disconnected: ${reason}`);
+        });
+        
         function sendMsg(){
             const msg = document.getElementById("msg").value;
-              // ✅ send message into room
-            socket.emit("send-to-room", { roomId, msg });
+            // ✅ send message into room
+            socket.emit("send-to-room", { msg });
         }
-
+        
         function addLi(text) {
             const li = document.createElement("li");
             li.innerText = text;
             list.appendChild(li);
         }
-    </script>
+        
+        function disconnect(){
+            socket.disconnect();
+            addLi("You disconnected from the server");
+        }
+        
+        function leaveRoom(){
+            socket.emit("leave-room", roomId);   //  different event name
+        }
+        </script>
   </body>
 </html>
